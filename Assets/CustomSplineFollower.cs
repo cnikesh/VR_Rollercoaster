@@ -8,9 +8,9 @@ public class CustomSplineFollower : MonoBehaviour
 
     public SplineContainer spline;
     public Transform cart;
-    public Transform[] points;
-    public Transform p1;
-    public Transform p2;
+
+    public GameObject cartObject;
+
     public float speed = 1f;
     float distancePercentage = 0f;
 
@@ -25,20 +25,25 @@ public class CustomSplineFollower : MonoBehaviour
     public float maxSpeedIncrease = 2.0f;
     public float maxSpeedDecrease = 0.5f;
 
+    private Rigidbody cartRigidbody;
+
+    private bool isDecline;
 
 
 
+     
     // Start is called before the first frame update
     void Start()
     {
         splineLength = spline.CalculateLength();
+
+        cartRigidbody = cartObject.GetComponent<Rigidbody>();
     }
 
     // Update is called once per frame
     void Update()
     {
 
-        spline.
         distancePercentage += speed * Time.deltaTime / splineLength;
 
 
@@ -64,11 +69,25 @@ public class CustomSplineFollower : MonoBehaviour
 
         transform.rotation = Quaternion.LookRotation(forward, transform.up);
 
-        if (isBetweenTwoPoints(cart.position,p1.position , p2.position))
-        {
+        isDecline = nextPosition.y < currentPosition.y;
 
-            Debug.Log(transform.position);
+        if (isDecline)
+        {
+            cartRigidbody.useGravity = false;
+            cartRigidbody.velocity = Vector3.zero;
         }
+        else
+        {
+            cartRigidbody.useGravity = true;
+        }
+
+        speed = GetAdjustedSpeed(currentPosition, nextPosition);
+
+        //if (isBetweenTwoPoints(cart.position,p1.position , p2.position))
+        //{
+
+        //    //Debug.Log(transform.position);
+        //}
 
     }
 
@@ -78,7 +97,7 @@ public class CustomSplineFollower : MonoBehaviour
         float distanceBX = Vector3.Distance(b, x);
         float distanceAB = Vector3.Distance(a, b);
 
-        Debug.Log(Mathf.Approximately(distanceAX + distanceBX, distanceAB));
+        //Debug.Log(Mathf.Approximately(distanceAX + distanceBX, distanceAB));
 
         //if ((distanceAX + distanceBX) == distanceAB) {
         //    Debug.Log(distanceAB);
@@ -88,7 +107,7 @@ public class CustomSplineFollower : MonoBehaviour
         return Mathf.Approximately(distanceAX + distanceBX, distanceAB);
     }
 
-    float GetAdjustedSpeed(currentPosition, nextPosition)
+    float GetAdjustedSpeed(Vector3 currentPosition, Vector3 nextPosition)
     {
         float heightDifference = nextPosition.y - currentPosition.y;
         //float turnAngle = Quaternion.Angle(railPoints[currentIndex].rotation, railPoints[currentIndex + 1].rotation);
@@ -107,38 +126,38 @@ public class CustomSplineFollower : MonoBehaviour
         return adjustedSpeed;
     }
 
-    private void FixedUpdate()
-    {
-        // Calculate the position and orientation of the cart on the spline
-        Vector3 position = spline.GetPoint(distance);
-        Quaternion rotation = spline.GetRotation(distance);
+    //private void FixedUpdate()
+    //{
+    //    // Calculate the position and orientation of the cart on the spline
+    //    Vector3 position = spline.GetPoint(distance);
+    //    Quaternion rotation = spline.GetRotation(distance);
 
-        // Calculate the velocity along the spline to apply forces
-        Vector3 velocity = (position - lastPosition) / Time.fixedDeltaTime;
+    //    // Calculate the velocity along the spline to apply forces
+    //    Vector3 velocity = (position - lastPosition) / Time.fixedDeltaTime;
 
-        // Apply gravity to the cart
-        Vector3 gravityForce = Vector3.down * gravity * rb.mass;
-        rb.AddForce(gravityForce);
+    //    // Apply gravity to the cart
+    //    Vector3 gravityForce = Vector3.down * gravity * rb.mass;
+    //    rb.AddForce(gravityForce);
 
-        // Apply the calculated velocity as a force
-        rb.velocity = velocity;
+    //    // Apply the calculated velocity as a force
+    //    rb.velocity = velocity;
 
-        // Set the position and rotation of the cart
-        rb.MovePosition(position);
-        rb.MoveRotation(rotation);
+    //    // Set the position and rotation of the cart
+    //    rb.MovePosition(position);
+    //    rb.MoveRotation(rotation);
 
-        // Update the distance traveled along the spline
-        distance += speed * Time.fixedDeltaTime;
+    //    // Update the distance traveled along the spline
+    //    distance += speed * Time.fixedDeltaTime;
 
-        // Check if the roller coaster has reached the end of the track
-        if (distance >= spline.Length)
-        {
-            // You can add logic to reset or end the ride here
-        }
+    //    // Check if the roller coaster has reached the end of the track
+    //    if (distance >= spline.Length)
+    //    {
+    //        // You can add logic to reset or end the ride here
+    //    }
 
-        // Update the last position for velocity calculation
-        lastPosition = position;
-    }
+    //    // Update the last position for velocity calculation
+    //    lastPosition = position;
+    //}
 
 
 }
