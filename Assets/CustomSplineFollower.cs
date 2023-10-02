@@ -8,12 +8,17 @@ public class CustomSplineFollower : MonoBehaviour
 
     public SplineContainer spline;
     public Transform cart;
+    public Transform[] points;
     public Transform p1;
     public Transform p2;
     public float speed = 1f;
     float distancePercentage = 0f;
 
     float splineLength;
+
+
+    public List<GameObject> vertices;
+    public List<string> trackType;
 
     // Start is called before the first frame update
     void Start()
@@ -64,8 +69,12 @@ public class CustomSplineFollower : MonoBehaviour
         float distanceBX = Vector3.Distance(b, x);
         float distanceAB = Vector3.Distance(a, b);
 
-        if ((distanceAX + distanceBX) == distanceAB) {
-        }
+        Debug.Log(Mathf.Approximately(distanceAX + distanceBX, distanceAB));
+
+        //if ((distanceAX + distanceBX) == distanceAB) {
+        //    Debug.Log(distanceAB);
+            
+        //}
 
         return Mathf.Approximately(distanceAX + distanceBX, distanceAB);
     }
