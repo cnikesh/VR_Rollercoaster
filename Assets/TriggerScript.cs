@@ -9,6 +9,8 @@ public class TriggerScript : MonoBehaviour
     public ParticleSystem explosion2;
     public ParticleSystem flame1;
     public ParticleSystem flame2;
+
+    public AudioSource explosionAudio;
     // Start is called before the first frame update
     void Start()
     {
@@ -23,7 +25,9 @@ public class TriggerScript : MonoBehaviour
 
     void OnTriggerEnter(Collider other) {
         explosion1.Play();
+        explosionAudio.Play();
         explosion2.Play();
+        explosionAudio.Play();
 
         flame1.Play();
         flame2.Play();
